@@ -1,6 +1,8 @@
-// import express from "express";
+// Types
+import { LoginCredentials } from '../src/LoginCredentials';
+
 import puppeteer from 'puppeteer';
-import express from 'express';
+import express, {Request } from 'express';
 import cors from "cors";
 import bodyParser from 'body-parser';
 
@@ -42,9 +44,13 @@ app.get("/", (req, res) => {
     res.json({msg: 'This is CORS-enabled for all origins!'})
 })
 
-app.post("/", (req, res) => {
-    console.log(req.body)
-    res.json({msg: "Ayooo"})
+app.post("/", (req: Request<{}, {}, LoginCredentials>, res) => {
+
+    if(req.body.username === "admin" && req.body.password === "123") {
+        res.json({msg: "Logon"})
+    } else {
+        res.json({msg: "Wrong Credentials"})
+    }
 })
 
 

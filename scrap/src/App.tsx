@@ -1,9 +1,12 @@
 import { useState } from "react"
-import axios from "axios"
+import axios, { AxiosResponse } from "axios"
 
+interface message {
+  msg: string
+}
 function App() {
 
-
+  const [msg, setMsg] = useState("")
   const [num, setNum] = useState(undefined)
   function search(e: any) {
     e.preventDefault()
@@ -24,8 +27,8 @@ function App() {
       username: e.target.name.value,
       password: e.target.password.value
     })
-    .then(function (response) {
-      console.log(response);
+    .then(function (response: AxiosResponse<message, any>) {
+      setMsg(response.data.msg);
     })
     .catch(function (error) {
       console.log(error);
@@ -46,6 +49,7 @@ function App() {
       <input name="password" type="password"/>
       <button type="submit">Search</button>
     </form>    
+    <div>{msg}</div>
     </>
   )
 }
