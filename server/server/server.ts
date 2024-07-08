@@ -21,12 +21,23 @@ async function put () {
 const browser = await puppeteer.launch({headless:false});
 const page = await browser.newPage();
 
+
 await page.goto('https://gordoncollegeccs.edu.ph/ccs/students/lamp/#/login');
 await page.setViewport({width: 1980, height: 1024});
 
 // Type into search box.
 await page.locator('#param1').fill('202210274@gordoncollege.edu.ph');
 await page.locator('#param2').fill('nope');
+
+page.on('response', response => {
+    const promise = Promise.resolve(response.text())
+    // console.log(promise)
+    promise.then((value) => {
+        console.log(value);
+        // Expected output: 123
+    });
+    // console.log(response.text());
+});
 
 // Enter to Login
 await page.keyboard.press('Enter');
@@ -38,7 +49,7 @@ await page.locator('.list').wait()
 await page.goto('https://gordoncollegeccs.edu.ph/ccs/students/lamp/#/main/todolist');
 }
 
-// put()
+put()
 
 app.get("/", (req, res) => {
     res.json({msg: 'This is CORS-enabled for all origins!'})
