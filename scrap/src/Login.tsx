@@ -35,7 +35,7 @@ export default function Login() {
       <label htmlFor="name">Username</label>
       <input name="name" />
       <label htmlFor="password">Password</label>
-      <input name="password" type="password"/>
+      <input name="password"/>
       <button type="submit">Login</button>
     </form>    
     </div>
