@@ -8,6 +8,33 @@ import 'dotenv/config'
 import express, {Request } from 'express';
 import cors from "cors";
 import bodyParser from 'body-parser';
+import webPush from 'web-push';
+import PushNotifications from 'node-pushnotifications';
+
+// webPush.setVapidDetails(
+//     'mailto:xjaylandero23@gmail.com',
+//     process.env.PUBLIC_KEYS!,
+//     process.env.PRIVATE_KEYS!
+// );
+
+const settings: PushNotifications.Settings = {
+    web: {
+      vapidDetails: {
+        subject: "mailto:xjaylandero23@gmail.com", // REPLACE_WITH_YOUR_EMAIL
+        publicKey: process.env.PUBLIC_KEYS!,
+        privateKey: process.env.PRIVATE_KEYS!,
+      },
+      gcmAPIKey: "gcmkey",
+      TTL: 2419200,
+      contentEncoding: "aes128gcm",
+      headers: {},
+    },
+    isAlwaysUseFCM: false,
+  };
+// const vapidKeys = webPush.generateVAPIDKeys();
+
+// console.log('Public Key:', vapidKeys.publicKey);
+// console.log('Private Key:', vapidKeys.privateKey);
 
 const app = express()
 app.use(cors())
@@ -33,14 +60,29 @@ app.get("/", (req, res) => {
 //   throw new Error("*** PHP file not found");
 // }
 
-app.post("/", async (req: Request<{}, {}, LoginCredentials>, res) => {
+app.post("/", async (req, res) => {
+// app.post("/", async (req: Request<{}, {}, LoginCredentials>, res) => {
 
+    const subscription = req.body;
+  console.log(subscription)
+    const push = new PushNotifications(settings)
+    // const push = new Notification()
+
+    const payload : PushNotifications.Data = { title : "Hiii", body: "Some Content" }
+    push.send(subscription, payload, (err, res) => {
+        if(err) {
+            console.log(err)
+        } else {
+            console.log(res)
+        }
+    })
+    // res.json({msg: "a"})
     // getWeb()
-    const loginCtrl = new LoginController(req.body.username, req.body.password)
+    // const loginCtrl = new LoginController(req.body.username, req.body.password)
 
-    const msg =  await loginCtrl.login()
+    // const msg =  await loginCtrl.login()
 
-    res.json({msg})
+    // res.json({msg})
     // if(req.body.username === "admin" && req.body.password === "123") {
     //     res.json({msg: "Logon"})
     // } else {
