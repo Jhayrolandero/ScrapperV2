@@ -1,4 +1,5 @@
 // Components
+import { useEffect } from "react"
 import Login from "./Login"
 function App() {
 
@@ -31,23 +32,76 @@ function App() {
 
   async function send() {
     // Checker of servive
-    const register = await navigator.serviceWorker.register("./sw.js", {scope: "/"})
-    console.log("Registered")
+    navigator.serviceWorker.register("./sw.js")
+    
 
-    // Register push
-    const subscription = await register.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey: urlBase64ToUint8Array(key)
+    navigator.serviceWorker.ready
+    .then((register) => {
+      console.log("Registered......")
+      return register.pushManager.getSubscription()
+      .then(async (subscription) => {
+        if(subscription) return subscription
+
+        return register.pushManager.subscribe({
+          userVisibleOnly: true,
+          applicationServerKey: urlBase64ToUint8Array(key)
+        })
+      })
+      .catch((err) => {
+        console.error(err)
+      })
+    })
+    .then((subscription) => {
+      console.log("Sub......")
+      fetch("http://localhost:5000", {
+        method: "POST",
+        body: JSON.stringify(subscription),
+        headers: {
+          "content-type": "application/json"
+        }
+      }).catch(err => console.log(err))
+    })
+    .catch((err) => {
+      console.log(err)
     })
 
-    await fetch("http://localhost:5000", {
-      method: "POST",
-      body: JSON.stringify(subscription),
-      headers: {
-        "content-type": "application/json"
-      }
-    }).catch(err => console.log(err))
+    // navigator.serviceWorker.register("./sw.js")
+    // .then(() => {
+    //   navigator.serviceWorker.ready.then((register) => {
+    //     register.pushManager.subscribe({
+    //       userVisibleOnly: true,
+    //       applicationServerKey: urlBase64ToUint8Array(key)
+    //     })
+    //     .then((subscription) => {
+    //         fetch("http://localhost:5000", {
+    //         method: "POST",
+    //         body: JSON.stringify(subscription),
+    //         headers: {
+    //           "content-type": "application/json"
+    //         }
+    //       }).catch(err => console.log(err))
+    //     })
+    //     .catch((err) => {
+    //       console.error(err)
+    //     })
+  
+    //   })
+    // })
+    // .catch((err) => {
+    //   console.error(err)
+    // })
   }
+
+  useEffect(() => {
+
+    if(!("serviceWorker" in navigator)){
+      alert("Service Worker is not supported")
+      return
+    }
+
+    send().catch(err => console.log(err))
+  }, [])
+  
 
   function urlBase64ToUint8Array(base64String : string) {
     const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
@@ -65,7 +119,7 @@ function App() {
   }
   return (
     <>
-    <button onClick={check}>Push</button>
+    {/* <button onClick={check}>Push</button> */}
     <div className="w-full h-screen flex justify-center items-center">
       <Login />
     </div>

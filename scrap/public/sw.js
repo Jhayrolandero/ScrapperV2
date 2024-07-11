@@ -1,23 +1,13 @@
 console.log("Service Worker Loaded...");
 
-self.addEventListener("push", (e) => {
-  if (!(self.Notification && self.Notification.permission === "granted"))
-    return;
-
-  const data = e.data.json();
-  const title = data.title || "Error in title";
-  const body = data.body || "Error in body";
-  // console.log("Push Recieved...");
-
-  new Notification(title, {
-    body: "Hello",
-    tag: "Simple Notif",
-  });
-
-  // notif.addEventListener("click", () => {
-  //   clients
-  // })
-  // self.registration.showNotification(data.title, {
-  //   body: "Knock Knock",
-  // });
+// Register event listener for the 'push' event.
+self.addEventListener("push", function (event) {
+  const message = event.data.text();
+  // Keep the service worker alive until the notification is created.
+  event.waitUntil(
+    // Show a notification with title 'ServiceWorker Cookbook' and body 'Alea iacta est'.
+    self.registration.showNotification("Message from Scrapper", {
+      body: message,
+    })
+  );
 });
