@@ -4,31 +4,6 @@ import Login from "./Login"
 function App() {
 
   const key = "BIU_udvoeMKlrJ2hjx_j7_9w91Xlgd-HVw7-MBPgs7019CGtRXBbtnVrkhM9DQ8HSd4V8XYRFqi8ADJzSTfKxbU"
-  function notif() {
-    Notification.requestPermission().then(x => {
-      if(x === 'granted') {
-        new Notification("Hello")
-      }
-    })
-  }
-
-  function check () {
-
-    if(!("serviceWorker" in navigator)){
-      alert("Service Worker is not supported")
-      return
-    }
-
-    try {
-      send()
-    } catch(err) {
-      console.log(err)
-    }
-
-    // send().catch(err => console.log(err))
-    // console.log("serviceWorker" in navigator)
-    // const test = navigator. 
-  }
 
   async function send() {
     // Checker of servive
@@ -40,7 +15,11 @@ function App() {
       console.log("Registered......")
       return register.pushManager.getSubscription()
       .then(async (subscription) => {
-        if(subscription) return subscription
+        if(subscription) {
+          console.log("ALready Sub")
+          return subscription
+        }
+        console.log("Subscribing")
 
         return register.pushManager.subscribe({
           userVisibleOnly: true,
@@ -64,36 +43,11 @@ function App() {
     .catch((err) => {
       console.log(err)
     })
-
-    // navigator.serviceWorker.register("./sw.js")
-    // .then(() => {
-    //   navigator.serviceWorker.ready.then((register) => {
-    //     register.pushManager.subscribe({
-    //       userVisibleOnly: true,
-    //       applicationServerKey: urlBase64ToUint8Array(key)
-    //     })
-    //     .then((subscription) => {
-    //         fetch("http://localhost:5000", {
-    //         method: "POST",
-    //         body: JSON.stringify(subscription),
-    //         headers: {
-    //           "content-type": "application/json"
-    //         }
-    //       }).catch(err => console.log(err))
-    //     })
-    //     .catch((err) => {
-    //       console.error(err)
-    //     })
-  
-    //   })
-    // })
-    // .catch((err) => {
-    //   console.error(err)
-    // })
   }
 
   useEffect(() => {
 
+    console.log("Init")
     if(!("serviceWorker" in navigator)){
       alert("Service Worker is not supported")
       return
