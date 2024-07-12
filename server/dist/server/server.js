@@ -3,7 +3,9 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const UserModel_1 = __importDefault(require("../src/model/UserModel"));
+// Controller 
+const PostController_1 = __importDefault(require("../src/controller/PostController"));
+const GetController_1 = __importDefault(require("../src/controller/GetController"));
 require("dotenv/config");
 const express_1 = __importDefault(require("express"));
 const cors_1 = __importDefault(require("cors"));
@@ -27,17 +29,24 @@ app.use(body_parser_1.default.urlencoded({
     extended: true
 }));
 const PORT = 5000;
-const user = new UserModel_1.default();
+const post = new PostController_1.default();
+const get = new GetController_1.default();
 app.get("/", (req, res) => {
     res.json({ msg: 'This is CORS-enabled for all origins!' });
 });
 app.get("/user", (req, res) => {
-    user.getUser();
+    get.getData("user");
     res.send("Hii");
+});
+app.post("/user", (req, res) => {
+    post.addData("user", req.body.title);
+    // console.log(req.body)
+    res.send("Working");
 });
 app.post("/", async (req, res) => {
     // app.post("/", async (req: Request<{}, {}, LoginCredentials>, res) => {
     const subscription = req.body;
+    console.log(JSON.stringify(subscription));
     const payload = "Hello";
     const options = {
         TTL: req.body.ttl,
@@ -49,6 +58,10 @@ app.post("/", async (req, res) => {
             .then(() => res.sendStatus(201))
             .catch(() => res.sendStatus(500));
     }, 3000);
+});
+app.post("/login", (req, res) => {
+    const credentials = req.body.username;
+    post.addData("user", credentials);
 });
 app.listen(PORT, () => {
     console.log(`Server starts at http://localhost:${PORT}`);

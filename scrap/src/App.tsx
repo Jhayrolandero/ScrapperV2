@@ -73,9 +73,9 @@ function App() {
   }
   return (
     <>
-    {/* <button onClick={check}>Push</button> */}
     <div className="w-full h-screen flex justify-center items-center">
       <Login />
+      <small>By default the site doesn't store your credentials</small>
     </div>
     </>
   )

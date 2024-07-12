@@ -11,9 +11,10 @@ export default function Login() {
     function postReq(e:any) {
       e.preventDefault()
   
-      axios.post('http://localhost:5000/', {
+      axios.post('http://localhost:5000/login', {
         username: e.target.name.value,
-        password: e.target.password.value
+        password: e.target.password.value,
+        subscribe: e.target.sub.checked
       })
       .then(function (response: AxiosResponse<message, any>) {
         setMsg(response.data.msg);
@@ -36,6 +37,11 @@ export default function Login() {
       <input name="name" />
       <label htmlFor="password">Password</label>
       <input name="password"/>
+      <label htmlFor="sub">
+        <p>Notification</p> 
+        <strong>By subscribing to notifications you entrust the site with your credentials</strong>
+      </label>
+      <input type="checkbox" name="sub"/>
       <button type="submit">Login</button>
     </form>    
     </div>

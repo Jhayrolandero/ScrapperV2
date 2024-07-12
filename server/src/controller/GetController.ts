@@ -8,11 +8,10 @@ class Get {
         this.user = new UserModel()
     }
 
-    public getData(model: string) {
+    public async getData(model: string) {
         switch(model) {
             case "user":
-                this.user.getUser()
-                break;
+                return await this.user.getUser()
 
             default:
                 throw "Model doesn't exist!"

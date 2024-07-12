@@ -3,30 +3,19 @@ import Post from '../src/controller/PostController';
 import Get from '../src/controller/GetController';
 
 import 'dotenv/config'
-import express, {Request } from 'express';
+import express, {Request, Response } from 'express';
 import cors from "cors";
 import bodyParser from 'body-parser';
 import webPush from 'web-push';
-import PushNotifications from 'node-pushnotifications';
+import { LoginCredentials } from '../src/LoginCredentials';
+import { QueryRes } from '../src/QueryRes';
+import LoginController from '../src/controller/LoginController';
 
 webPush.setVapidDetails(
     'mailto:xjaylandero23@gmail.com',
     process.env.PUBLIC_KEYS!,
     process.env.PRIVATE_KEYS!
 );
-
-// const db = mysql.createConnection({
-//   host     : 'localhost',
-//   user     : 'root',
-//   password : '',
-//   database : "expressDB"
-// })
-
-// db.connect(err => {
-//   if(err) throw err
-
-//   console.log("Connection Done")
-// })
 
 const app = express()
 app.use(cors())
@@ -45,21 +34,22 @@ app.get("/", (req, res) => {
     res.json({msg: 'This is CORS-enabled for all origins!'})
 })
 
-app.get("/user", (req, res) => {
+app.get("/user", (req, res: Response<QueryRes, any>) => {
   get.getData("user")
-  res.send("Hii")
+  .then(data => res.json(data))
+  .catch(err => {
+    console.log(err)
+    res.sendStatus(500)
+  })
 })
 
 app.post("/user", (req, res) => {
-
   post.addData("user", req.body.title)
-  // console.log(req.body)
   res.send("Working")
 })
 app.post("/", async (req, res) => {
-// app.post("/", async (req: Request<{}, {}, LoginCredentials>, res) => {
-
     const subscription = req.body;
+    console.log(JSON.stringify(subscription))
     const payload = "Hello"
     const options = {
       TTL: req.body.ttl,
@@ -73,6 +63,32 @@ app.post("/", async (req, res) => {
     .then(() => res.sendStatus(201))
     .catch(() => res.sendStatus(500))
   }, 3000)
+})
+
+app.post("/login", (req: Request<any, any, LoginCredentials>, res) => {
+
+  const username = req.body.username
+  const password = req.body.password
+  const subscribe = req.body.subscribe
+
+  const loginLamp = new LoginController(username, password)
+
+  loginLamp.login()
+  .then(x => {
+    if(subscribe && x === "Logged In!") {
+      post.addData("user", {username, password, subscribe})
+    }
+    res.json({msg: x})
+  })
+  .catch(err => {
+
+    console.log(err)
+    res.sendStatus(500)
+  })
+  // const credentials = req.body
+  // // console.log(credentials)
+  // post.addData("user", credentials)
+  // res.json({msg: "Yow"})
 })
 
 

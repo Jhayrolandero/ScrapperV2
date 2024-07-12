@@ -8,10 +8,10 @@ class Post {
         this.user = new UserModel()
     }
 
-    public addData(model: string, data: string) {
+    public async addData(model: string, data: object) {
         switch(model) {
             case "user":
-                this.user.addUser(data)
+                await this.user.addUser(data)
                 break
             default:
                 throw "Not Found"

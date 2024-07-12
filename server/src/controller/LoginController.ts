@@ -19,7 +19,7 @@ class LoginController {
 
     async login() {
         try {
-            this.browser = await puppeteer.launch({headless: false})
+            this.browser = await puppeteer.launch()
             this.page = await this.browser.newPage()
     
             await this.page.goto(process.env.URL!);
@@ -39,31 +39,7 @@ class LoginController {
             if(await this.getPageResponse()) {
                 return "Failed to Login"
             }
-    
-
-            // this.page.on('response', response => {
-    
-    
-            //     const uri = response.url().split('/')
-            //     const loginEndpoint = uri[uri.length - 1]
-    
-            //     const res: HttpResponseCode = {
-            //         endpoint: loginEndpoint,
-            //         statusCode: response.status()
-            //     } 
-    
-            //     this.HttpResponse = [...this.HttpResponse, res]
-            //     console.log(this.HttpResponse)
-            //     // const promise = Promise.resolve(response.text())
-            //     // // console.log(promise)
-            //     // promise.then((value) => {
-            //     //     console.log(value);
-            //     //     // Expected output: 123
-            //     // });
-            // // console.log(response.url() + " - " + response.status());
-            // })
-    
-    
+        
             // Wait for navigation
             await this.page.locator('.list').wait()
     
@@ -73,13 +49,12 @@ class LoginController {
             return "Logged In!"
 
         } catch(err) {
-
-            console.log(err)
+            throw err
         }
 
     }
 
-    async getPageResponse() {
+    private async getPageResponse() {
         let badResponse = false;
         const page = this.page;
     
@@ -111,7 +86,7 @@ class LoginController {
             // Timeout to ensure the promise resolves even if no 'response' event is triggered
             setTimeout(() => {
                 resolve(badResponse);
-            }, 5000); // Adjust timeout as needed
+            }, 10000); // Adjust timeout as needed
         });
     }
     

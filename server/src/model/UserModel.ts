@@ -1,35 +1,22 @@
-import Database from "../Database";
+import createPayload from "../global/Payload"
+import Query from "../global/Query"
 
-class UserModel extends Database {
+class UserModel {
 
     private TABLE = "user"
+    private query
 
-    public getUser() {
-        const sql = "SELECT * FROM user"
-
-        this.conn.query(sql, (err, res, field) => {
-            if(err) throw err
-
-            console.log(res)
-            console.log(field)
-        })
+    constructor() {
+        this.query = new Query(this.TABLE)
     }
 
-    public addUser(data: string) {
-        const sql = `INSERT INTO ${this.TABLE} (username)
-                    VALUES (?)`;    
+    public async getUser() {
+        const data = await this.query.selectQuery()
+        return createPayload(data)
+    }
 
-        this.conn.query(
-            sql, 
-            [data],
-            (err, res, field) => {
-                if(err) throw err
-
-                console.log(res)
-                console.log(field)
-            }
-        )
-                
+    public async addUser(data: object) {
+        await this.query.insertQueries(data)                
     }
 }
 
