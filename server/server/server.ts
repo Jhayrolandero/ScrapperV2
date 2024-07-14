@@ -2,6 +2,8 @@
 import Post from '../src/controller/PostController';
 import Get from '../src/controller/GetController';
 
+import {generateToken, verifyToken} from '../src/global/Auth';
+
 import 'dotenv/config'
 import express, {Request, Response } from 'express';
 import cors from "cors";
@@ -25,10 +27,12 @@ app.use(bodyParser.urlencoded({     // to support URL-encoded bodies
 })); 
 
 const PORT = 5000
-
+// 
 const post = new Post()
 const get = new Get()
 
+console.log(generateToken())
+console.log(verifyToken("eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3MjA5Mjc2NDIsImRhdGEiOiJiYXIiLCJpYXQiOjE3MjA5Mjc2MjJ9.CULF9ZCEcRtUfar0R3Nk0TxNmGu-EyRiOH4NUe2YrUU"))
 
 app.get("/", (req, res) => {
     res.json({msg: 'This is CORS-enabled for all origins!'})
@@ -76,7 +80,7 @@ app.post("/login", (req: Request<any, any, LoginCredentials>, res) => {
   loginLamp.login()
   .then(x => {
     if(subscribe && x === "Logged In!") {
-      post.addData("user", {username, password, subscribe})
+      post.addData("user", {username, password, subscribe}).then
     }
     res.json({msg: x})
   })
