@@ -1,15 +1,21 @@
 // Components
-import { useEffect } from "react"
+import React, {useEffect, useState } from "react"
 import Login from "./Login"
+import { Route, Routes } from 'react-router-dom';
+import Home from "./Home";
+
+
+
 function App() {
-
   const key = "BIU_udvoeMKlrJ2hjx_j7_9w91Xlgd-HVw7-MBPgs7019CGtRXBbtnVrkhM9DQ8HSd4V8XYRFqi8ADJzSTfKxbU"
+  const [isAuth, setAuth] = useState(false)
 
+  const handleAuth = (val: boolean) => {
+    setAuth(val)
+  }
   async function send() {
     // Checker of servive
     navigator.serviceWorker.register("./sw.js")
-    
-
     navigator.serviceWorker.ready
     .then((register) => {
       console.log("Registered......")
@@ -45,16 +51,16 @@ function App() {
     })
   }
 
-  useEffect(() => {
+  // useEffect(() => {
 
-    console.log("Init")
-    if(!("serviceWorker" in navigator)){
-      alert("Service Worker is not supported")
-      return
-    }
+  //   console.log("Init")
+  //   if(!("serviceWorker" in navigator)){
+  //     alert("Service Worker is not supported")
+  //     return
+  //   }
 
-    send().catch(err => console.log(err))
-  }, [])
+  //   send().catch(err => console.log(err))
+  // }, [])
   
 
   function urlBase64ToUint8Array(base64String : string) {
@@ -74,8 +80,11 @@ function App() {
   return (
     <>
     <div className="w-full h-screen flex justify-center items-center">
-      <Login />
-      <small>By default the site doesn't store your credentials</small>
+        <Routes>
+          <Route path="/home" element={isAuth ? <Home /> : <Login onAuth={handleAuth}/>}/>
+          <Route path="/" element={<Login onAuth={handleAuth}/>} />
+        </Routes>
+      {/* <Login /> */}
     </div>
     </>
   )

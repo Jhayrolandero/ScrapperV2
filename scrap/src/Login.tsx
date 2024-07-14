@@ -1,13 +1,19 @@
 import { useState } from "react"
 import axios, { AxiosResponse } from "axios"
+import { useNavigate } from "react-router-dom"
+// import { AuthContext } from "./App"
+
 
 interface message {
-  msg: string
+  msg: string,
+  token: string
 }
 
-export default function Login() {
-    const [msg, setMsg] = useState("")
-  
+export default function Login({onAuth} : {onAuth: (val: boolean) => void}) {
+    // const [isAuth, setAuth] = useContext(AuthContext)
+    const [msg, setMsg] = useState('')
+    const navigate = useNavigate();
+
     function postReq(e:any) {
       e.preventDefault()
   
@@ -17,7 +23,16 @@ export default function Login() {
         subscribe: e.target.sub.checked
       })
       .then(function (response: AxiosResponse<message, any>) {
-        setMsg(response.data.msg);
+        const res = response.data
+        setMsg(res.msg);
+        
+        if(res.msg === "Logged In!") {
+          document.cookie = `token=${res.token}` 
+          onAuth(true)
+          // setAuth(true)
+          navigate("/home")
+        }
+
       })
       .catch(function (error) {
         console.log(error);

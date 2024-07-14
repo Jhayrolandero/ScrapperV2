@@ -1,12 +1,13 @@
 import jwt from "jsonwebtoken";
 import 'dotenv/config'
 
-
 const JWT_SECRETKEY = process.env.JWT_SECRET_KEY!
+const expDate = Math.floor(Date.now() / 1000) + (60 * 60) 
+
 const generateToken = () => {
 
 const token = jwt.sign({
-    exp: Math.floor(Date.now() / 1000) + (1 * 20),
+    exp: expDate,
     data: "bar"
 }, JWT_SECRETKEY)
 

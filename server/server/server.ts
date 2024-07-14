@@ -79,20 +79,19 @@ app.post("/login", (req: Request<any, any, LoginCredentials>, res) => {
 
   loginLamp.login()
   .then(x => {
+    const token = generateToken()
     if(subscribe && x === "Logged In!") {
       post.addData("user", {username, password, subscribe}).then
     }
-    res.json({msg: x})
+
+    if(x === "Logged In!") res.json({msg: x, token})
+    else res.json({msg: x})
   })
   .catch(err => {
-
+    
     console.log(err)
     res.sendStatus(500)
   })
-  // const credentials = req.body
-  // // console.log(credentials)
-  // post.addData("user", credentials)
-  // res.json({msg: "Yow"})
 })
 
 
